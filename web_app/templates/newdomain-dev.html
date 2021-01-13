@@ -1,0 +1,91 @@
+{% extends 'layout.html' %}
+
+{% block title %}New Subdomain{% endblock %}
+
+{% block content %}
+<h2>Register a New Subdomain</h2>
+<div>
+    <p>
+    <div class="msg" style="font-size:14px; padding-left: 10px; padding-right: 20px; font-weight: bold">You can check whether a subdomain is available <a href="{{ url_for('routes.hostLookup') }}">here</a>. Note that everything is in test mode right now. This won't actually do anything! <a href="mailto:gay@is.gay" style="font-size:14px; font-weight: bold">Email us</a> if you really want a subdomain for real!
+    </div>
+    <hr>
+    <p>
+    <div class="msg" style="font-size:18px; padding-left: 10px; padding-right: 20px; font-weight: bold; color:red">
+            {{ msg }}
+    </div>
+    <p>
+    <table style="width:50%">
+        <form action="{{ url_for('routes.newdomain') }}" method="post" autocomplete="off" id="newdomain_form">
+        
+        <tr>
+            <td><label for="Host"><i class="fas fa-anchor"></i></label>
+                Host:
+            </td>
+            <td>
+                <label for="host_type"><i class="fas fa-otter"></i></label>
+                Host type:
+            </td>
+            <td>
+                <label for="Address"><i class="fas fa-link"></i></label>
+                URL or Host Server:
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<input type="text" name="host_name" placeholder="Host" id="host_name" required>
+            </td>
+			<td>
+                <select name="host_type" id="host_type" form="newdomain_form" required>
+                  <option value="URL">URL Redirect</option>
+                  <option value="FRAME">URL Redirect (masked)</option>
+                  <option value="A">A Record</option>
+                </select>
+            </td>
+            <td>
+				<input type="text" name="address" placeholder="Address" id="address" required>
+            </td>
+        </tr>
+    </table>
+    <table style="width:80%">
+        <tr>
+            <td>
+                <label for="Description"><i class="fas fa-kiss-wink-heart"></i></label>
+            How will you use this subdomain? (optional but appreciated)
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <textarea name="description"  id="description" rows="5" cols="80">Gay Hopes and Dreams.</textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="Password"><i class="fas fa-key"></i></label>
+                Enter your password:
+            </td>
+        </tr>
+        <tr>
+            <td>
+				<input type="password" name="password" placeholder="Password" id="password" required>
+            </td>            
+        </tr>
+        <tr>
+            <td> </td>
+        </tr>
+        <tr>
+            <td> </td>
+        </tr>
+        <tr>
+            <td> </td>
+        </tr>
+        <tr>
+            <td><input type="checkbox" id="confirm_TOS" name="confirm_TOS" value="confirm_TOS" required>
+  <label for="confirm_TOS"> By checking this box, you confirm that you have read and agree to the <a href="https://docs.google.com/document/d/e/2PACX-1vSdjdVPuj32DXvmkW_4kCgMCXE9uexzD6Zn2dArGcuzWndg2PzCsFVUudGQn3xbJWlHN87A-9aKCt2g/pub">Terms of Use</a></label>
+            </td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="Submit"></td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

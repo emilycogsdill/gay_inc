@@ -1,0 +1,24 @@
+{% if session.loggedin %}
+
+{% extends 'layout.html' %}
+
+{% else %}
+
+{% extends 'layout-logged-out.html' %}
+
+{% endif %}
+
+{% block title %}Subdomain for Sale{% endblock %}
+
+{% block content %}
+<h2>Subdomain for Sale</h2>
+<div>
+    <div class="msg" style="font-size:20px; padding-left: 10px; font-weight: bold">
+    This subdomain has not yet been claimed! Do you want it? I bet you DO???
+    </div>
+    <p>
+    <p>If you're new around here, <a href="https://is.gay/login/register">sign up for an account</a> to get started on your gay subdomain journey!
+    <p>(Or <a href="mailto:gay@is.gay">shoot us an email</a>. We are good and chill and nice!)
+    <p>If you are NOT new around here (wow! Thank you! #blessed), head on over to our<a href="https://is.gay/login/newdomain"> extremely friendly form</a> to make your new is.gay subdomain dream a reality!
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% if session.loggedin %}
+
+{% extends 'layout.html' %}
+
+{% else %}
+
+{% extends 'layout-logged-out.html' %}
+
+{% endif %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="msg" style="font-size:14px; padding-left: 20px; padding-right: 20px; font-weight: bold">{{ msg }}</div>
+{% endblock %}

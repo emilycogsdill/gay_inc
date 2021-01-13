@@ -1,0 +1,18 @@
+{% if session.loggedin %}
+
+{% extends 'layout.html' %}
+
+{% else %}
+
+{% extends 'layout-logged-out.html' %}
+
+{% endif %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<h2>Goodbye, {{ host }}</h2>
+<div>
+    <p> {{ msg }}
+    <p><a href='/remove-final/{{ host }}'><button>Fucking do it</button></a>   <a href='/my-subdomains'><button>nah</button></a>
+</div>
+{% endblock %}

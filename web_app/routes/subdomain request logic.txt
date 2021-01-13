@@ -1,0 +1,38 @@
+If subdomain is whitelisted and available:
+
+1) add row to host_requests
+
+sql = f"INSERT INTO host_requests (user_id, host, type, address, datetime_requested, payment_status) VALUES ({user_id}, '{host}', '{host_type}', '{address}', '{datetime_requested}', 'new request');"
+
+
+
+
+2) add row to subscriptions with null start and end date
+
+sql = f"INSERT INTO subscriptions (host_id, name, start_date, end_date, is_active, is_premium) SELECT id as host_id, host as name, null, null, 0 FROM hosts WHERE host={host}
+"
+
+user_id, host, type, address, datetime_requested, payment_status) VALUES ({user_id}, '{host}', '{host_type}', '{address}', '{datetime_requested}', 'new request');"
+
+
+
+
+INSERT INTO subscriptions (host_id, name, start_date, end_date, is_active, is_premium) SELECT id as host_id, host as name, null, null, 0, is_premium FROM hosts WHERE host_name={host_name};
+
+UPDATE subscriptions SET user_id = {user_id} WHERE host_name = {host_name};
+
+
+
+
+
+
+
+3) update row in hosts with user_id & set is_active to TRUE
+
+UPDATE hosts SET user_id = {user_id} WHERE host_name = {host_name};
+UPDATE hosts SET is_requested = true WHERE host_name = {host_name};
+
+
+
+
+

@@ -1,0 +1,54 @@
+
+{% if session.loggedin %}
+
+{% extends 'layout.html' %}
+
+{% else %}
+
+{% extends 'layout-logged-out.html' %}
+
+{% endif %}
+
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+
+{% if newsubdomain %}
+
+    <div class="msg" style="font-size:18px; padding-left: 20px; padding-right: 20px; font-weight: bold">This subdomain is for sale! Lucky you!!!</div>
+
+{% else %}
+    <h2>Welcome to Gay, Inc.!</h2>
+
+{% endif %}
+
+
+
+
+{% if login %}
+
+    <div class="msg" style="font-size:18px; padding-left: 20px; padding-right: 20px; font-weight: bold">Welcome back, {{ username }}!!! Proud of u.</div>
+    <div><p>Confused? Check out this extremely helpful <a href="https://is.gay/info">information</a>.
+    <p>Want to see your account info? It ain't much, but it's <a href="https://is.gay/account">honest work.</a>
+    <p>Want to see your subdomains? <a href="https://is.gay/my-subdomains">I bet you do.</a>
+    <p>Want to add a subdomain? PERHAPS MANY OF THEM? <a href="https://is.gay/newdomain">Let us help you achieve your dreams.</a>
+    <p>Spooked? <a href="https://is.gay/login/logout">Log out.</a>  
+
+{% else %}
+        
+    <div><h2>Help, where am I?</h2>
+        <p>
+        <p>You have stumbled onto the domain <b>is.gay</b>, where we sell subdomains for stupidly low prices! Do you want to pay us a dollar a month to host your site or redirect from <b>steveswedding.is.gay</b>? You can!
+    </div>
+<div><h2>What should I do?</h2>
+    <p>
+    <p>If this is your first time here, you might be feeling confused, and even a little scared (but maybe excited, too!). Here is some <a href="https://is.gay/info">information</a> that might help you sort out your feelings.
+<p>When you feel ready, go ahead and <a href="https://is.gay/register">register an account</a>.
+<p>Or <a href="https://is.gay/register">login</a>.
+{% endif %}
+
+  
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>{% block title %}{% endblock %}</title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-JFWWF0QLG4"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-JFWWF0QLG4');
+        </script>
+	</head>
+	<body class="loggedin">
+		<nav class="navtop">
+			<div>
+				<!-- <h1>What's up, {{ username }}</h1> -->
+                <a href="{{ url_for('routes.home') }}"><i class="fas fa-home"></i>Home</a>
+				<a href="{{ url_for('routes.info') }}"><i class="fas fa-question"></i>Info</a>
+				<a href="{{ url_for('routes.account') }}"><i class="fas fa-user-circle"></i>Account</a>
+				<a href="{{ url_for('routes.my_subdomains') }}"><i class="fas fa-cannabis"></i>My Subdomains</a>
+				<a href="{{ url_for('routes.newdomain') }}"><i class="fas fa-link"></i>Register New Subdomain?!</a>
+				<a href="{{ url_for('routes.logout') }}"><i class="fas fa-sign-out-alt"></i>Logout</a>
+                
+			</div>
+		</nav>
+		<div class="content">
+			{% block content %}{% endblock %}
+		</div>
+	</body>
+</html>

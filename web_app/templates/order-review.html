@@ -1,0 +1,40 @@
+{% if session.loggedin %}
+
+{% extends 'layout.html' %}
+
+{% else %}
+
+{% extends 'layout.html' %}
+
+{% endif %}
+
+{% block title %}Review Order{% endblock %}
+
+{% block content %}
+<h2>Review Your Order Please</h2>
+<div>
+    <p>{{ msg }}
+    <p style="font-weight: bold;">You are placing an order for the following subdomain:</p>  
+    <table>
+		{% for h in hosts %}
+        <tr>
+            <td>Host:</td>
+            <td>{{ h.host }}</td>
+        </tr>
+        <tr>
+            <td>Type:</td>
+            <td>{{ h.type }}</td>
+        </tr>
+        <tr>
+            <td>Address:</td>
+            <td>{{ h.address }}</td>
+        </tr>
+        <tr>
+            <td><a href='/detail/{{ h.host }}'><button>Details</button></td>
+            <td><a href='/remove/{{ h.host }}'><button>DELETE?!</button></td>
+        </tr>
+        <tr><td><br></td></tr>
+		{% endfor %}
+    </table>
+</div>
+{% endblock %}

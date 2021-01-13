@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Register</title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+	</head>
+	<body>
+		<div class="register">
+			<h1>Register</h1>
+			<div class="links">
+				<a href="{{ url_for('routes.login') }}">Login</a>
+				<a href="{{ url_for('routes.register') }}" class="active">Register</a>
+			</div>
+            <br>
+			<div class="msg" style="font-size:14px; padding-left: 20px; padding-right: 20px; font-weight: bold">{{ msg }}</div>
+            
+			<form action="{{ url_for('routes.register') }}" method="post" autocomplete="off">
+				<label for="username">
+					<i class="fas fa-user"></i>
+				</label>
+				<input type="text" name="username" placeholder="Username" id="username" required>
+                
+				<label for="password">
+					<i class="fas fa-lock"></i>
+				</label>
+				<input type="password" name="password" placeholder="Password" id="password" required>
+                
+				<label for="email">
+					<i class="fas fa-envelope"></i>
+				</label>
+				<input type="email" name="email" placeholder="Email (required)" id="email" required>
+                                    
+                <label for="first_name">
+					<i class="fas fa-user"></i>
+				</label>
+				<input type="text" name="first_name" placeholder="First Name (optional)" id="first_name">
+                
+				<label for="last_name">
+					<i class="fas fa-user"></i>
+				</label>
+				<input type="text" name="last_name" placeholder="Last Name (optional)" id="last_name">
+                
+                <div style="font-size:9px; padding-left: 20px; padding-right: 20px">
+                <p>Your email and full name are completely confidential and will never be shared outside of Gay, Inc.</p>
+                <p>We will only email you important information about your account. We don't even <i>have</i> any marketing emails - aint nobody got time for that.</p>
+                </div>
+                
+				<input type="submit" value="Register">
+			</form>
+		</div>
+	</body>
+</html>
+
+
+

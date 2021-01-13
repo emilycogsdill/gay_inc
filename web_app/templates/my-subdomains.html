@@ -1,0 +1,42 @@
+{% if session.loggedin %}
+
+{% extends 'layout.html' %}
+
+{% else %}
+
+{% extends 'layout-logged-out.html' %}
+
+{% endif %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<h2>{{ account['username'] }}'s subdomains</h2>
+<div>
+    <p>{{ msg }}
+    <p style="font-weight: bold;">Your subdomains:</p>  
+    <!-- TODO: if user has no subdomains, add a super special message here -->
+    <table>
+    
+		{% for h in hosts %}
+        <tr>
+            <td>Host:</td>
+            <td>{{ h.host }}</td>
+        </tr>
+        <tr>
+            <td>Type:</td>
+            <td>{{ h.type }}</td>
+        </tr>
+        <tr>
+            <td>Address:</td>
+            <td>{{ h.address }}</td>
+        </tr>
+        <tr>
+            <td><a href='/detail/{{ h.host }}'><button>Details</button></td>
+            <td><a href='/remove/{{ h.host }}'><button>DELETE?!</button></td>
+        </tr>
+        <tr><td><br></td></tr>
+		{% endfor %}
+    </table>
+</div>
+{% endblock %}

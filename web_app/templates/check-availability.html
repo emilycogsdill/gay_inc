@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+
+{% block title %}Check Availability{% endblock %}
+
+{% block content %}
+<h2>Check Subdomain Availability</h2>
+<div>
+    <p>First, look up whether the subdomain you want to register is available:
+    <p>
+    <table>
+        <form action="{{ url_for('routes.hostLookup') }}" method="post" autocomplete="off" id="hostLookup">
+        <tr>
+            <td><label for="Host">
+					<i class="fas fa-anchor"></i>
+				</label>Host:</td>
+            <td>
+				<input type="text" name="host_name" placeholder="Host" id="host_name">
+            </td>
+        </tr>
+        <tr>
+        <tr></tr>
+            <td><input type="submit" value="Look up host"></td>
+        </tr>
+        </form>
+    <p>
+    <div class="msg" style="font-size:18px; padding-left: 10px; padding-right: 20px; font-weight: bold">
+        {{ lookup_msg }}
+    </div>
+    </table>
+</div>
+{% endblock %}

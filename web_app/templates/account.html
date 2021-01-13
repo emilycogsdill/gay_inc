@@ -1,0 +1,38 @@
+{% if session.loggedin %}
+
+{% extends 'layout.html' %}
+
+{% else %}
+
+{% extends 'layout-logged-out.html' %}
+
+{% endif %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+{% for a in account %}
+<h2>{{ a.username }}'s profile</h2>
+<div>
+    <p style="font-weight: bold;">Your account details are below:</p>
+    <table>
+        <tr>
+            <td>Username:</td>
+            <td>{{ a.username }}</td>
+        </tr>
+        <tr>
+            <td>Email:</td>
+            <td>{{ a.email }}</td>
+        </tr>
+        <tr>
+            <td><a href="{{ url_for('routes.change_or_reset_password') }}">Change or reset password</a>
+        </tr>
+        <tr><td><br></td></tr>
+        <tr>
+            
+        </tr>
+    </table>
+</div>
+{% endfor %}
+{% endblock %}

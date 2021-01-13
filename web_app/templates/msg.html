@@ -1,0 +1,22 @@
+
+{% if session.loggedin %}
+
+{% extends 'layout.html' %}
+
+{% else %}
+
+{% extends 'layout-logged-out.html' %}
+
+{% endif %}
+
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+
+    <h2>Welcome to Gay, Inc.!</h2>
+
+    <div class="msg" style="font-size:18px; padding-left: 20px; padding-right: 20px; font-weight: bold">{{ msg }}</div>
+    
+{% endblock %}

@@ -1,0 +1,18 @@
+{% if session.loggedin %}
+
+{% extends 'layout.html' %}
+
+{% else %}
+
+{% extends 'layout-logged-out.html' %}
+
+{% endif %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<h2>Details on Host: {{host}}</h2>
+<div>
+    <p> {{ msg }}
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>{% block title %}{% endblock %}</title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-JFWWF0QLG4"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-JFWWF0QLG4');
+        </script>
+	</head>
+	<body class="loggedin">
+		<nav class="navtop">
+			<div>
+				<!-- <h1>What's up, {{ username }}</h1> -->
+                <a href="{{ url_for('routes.login') }}"><i class="fas fa-home"></i>Login</a>
+				<a href="{{ url_for('routes.register') }}"><i class="fas fa-user-circle"></i>Register</a>
+				<a href="{{ url_for('routes.info') }}"><i class="fas fa-question"></i>Info</a>
+                
+			</div>
+		</nav>
+		<div class="content">
+			{% block content %}{% endblock %}
+		</div>
+	</body>
+</html>
