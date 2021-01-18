@@ -5,18 +5,23 @@ import mysql.connector #requires mysql-connector-python
 from os import environ
 
 
-username = environ['DB_USERNAME']
-password = environ['DB_PASSWORD']
-hostname = environ['DB_HOSTNAME']
-database = environ['DB_DATABASE']
-
-#api_secret_prod = environ['STRIPE_SECRET_KEY']
-
-SQLALCHEMY_DATABASE_URI = f'mysql+mysqlconnector://{username}:{password}@{hostname}/{database}'
-
-engine = create_engine(SQLALCHEMY_DATABASE_URI)
+def createEngine():
+    username = environ['DB_USERNAME']
+    password = environ['DB_PASSWORD']
+    hostname = environ['DB_HOSTNAME']
+    database = environ['DB_DATABASE']
+    
+    #api_secret_prod = environ['STRIPE_SECRET_KEY']
+    
+    SQLALCHEMY_DATABASE_URI = f'mysql+mysqlconnector://{username}:{password}@{hostname}/{database}'
+    
+    engine = create_engine(SQLALCHEMY_DATABASE_URI)
+    
+    return engine
 
 def executeQuery(sql):
+    
+    engine = createEngine()
     
     with engine.connect() as con:
         con.execute(sql)
@@ -153,24 +158,3 @@ def getHostDetails(session,host):
         results = []
     
     return results
-
-
-
-# use this function to add list of names contained in a CSV to the "blacklist" table, which will prevent new subdomains from using these names
-
-#WARNING!!! Pandas is scuffed in the virtual environment. I don't know why. Don't need it for the rest of the web app, so gonna yeet this. Keeping for future reference.
-
-#def AddCSVToBlacklist(csvfilename):
-#    
-#    # import the data and 
-#    df = pd.read_csv(csvfilename)
-#
-#    values = ["('"+str(x)+"')" for x in df['name']]
-#    
-#    insert_string = ','.join(values)
-#    
-#    sql = f"TRUNCATE TABLE blacklist_stg; INSERT INTO blacklist_stg (name) VALUES {insert_string};"
-#                    
-#    executeQuery(sql)
-#    #print(sql)
-#    print(f"Contents of {csvfilename} successfully added to blacklist_stg")

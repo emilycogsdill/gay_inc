@@ -5,12 +5,38 @@ import json
 from datetime import datetime
 import pytz
 
+import sys
+sys.path.append('/home/isgasygd/dev/routes/utils')
+
+from mysql_utils import *
+
 # authentication
 api_secret_prod = environ['STRIPE_SECRET_KEY']
 
 stripe.api_key = api_secret_prod
 
-def createCustomer(email, username, *first_name, *last_name):
+
+def getStripeEventIDs():
+    '''
+    returns list of event IDs already present in MySQL database
+    '''
+    
+    sql = "SELECT stripe_event_id FROM stripe_events;"
+    
+    results = getQueryResults(sql)
+    
+    #construct a URL from this dict
+    list_of_stripe_event_ids=[]
+    i=1
+    
+    for elem in results:
+        
+        event_id = elem['stripe_event_id']
+        list_of_stripe_event_ids.append(event_id)
+
+    return list_of_stripe_event_ids
+
+def createCustomer(email, username):
 
     '''
     When a user registers on the site, create a Stripe customer record for them.
@@ -19,8 +45,8 @@ def createCustomer(email, username, *first_name, *last_name):
     
     response = stripe.Customer.create(
        email = email
-      #,name = username
-      ,name = first_name + ' ' + last_name
+      ,name = username
+      #,name = first_name + ' ' + last_name
       ,description = username
     )
     
@@ -32,65 +58,147 @@ def createCustomer(email, username, *first_name, *last_name):
     return customer_id
 
 
-def getChargeSuccessEvents():
 
-    #get "Charge Succeeded" events from Stripe
-    events=stripe.Event.list(type='charge.succeeded') #this also takes a limit parameter - maybe someday we will have enough business for that to be necessary
-
-    #dump the response object into a json
-    json_data = json.dumps(events.__dict__['_previous'])
-    json_object = json.loads(json_data)
-    
-    events = json_object['data']
-    
-    events_data=[]
-    
-    for event in events:
-        if event['object']=='event':
-    
-            event_data={}
-            event_data['event_id']=event['id']
-            event_data['event_type']=event['type']
-            #--TIMESTAMP----------
-            createdate_epoch = event['created']
-            event_data['createdate_epoch']=createdate_epoch
-            # get time in tz
-            tz_utc = pytz.timezone('UTC')
-            event_data['createdate_timestamp_utc'] = datetime.fromtimestamp(createdate_epoch, tz_utc).strftime('%Y-%m-%d %H:%M:%S')
-            # get time in Eastern
-            tz = pytz.timezone('America/New_York')
-            event_data['createdate_timestamp'] = datetime.fromtimestamp(createdate_epoch, tz).strftime('%Y-%m-%d %H:%M:%S')
-            
-            event_data['customer_id'] = event['data']['object']['customer']
-            event_data['amount'] = event['data']['object']['amount']
-            event_data['amount_captured'] = event['data']['object']['amount_captured']
-            event_data['amount_refunded'] = event['data']['object']['amount_refunded']
-            
-            events_data.append(event_data)
-            
-    return events_data
-
-def initiateMonthly(customer_id):
+def createOneYearInvoice(customer_id):
     #initiate a monthly subdomain invoice. This sends an invoice for a one-time payment and begins a monthly subscription for that customer
     
-    
     stripe.InvoiceItem.create(
-       price='price_1HvQfgGun3mcXhIzqPb1QzmX' # $1 one-time
+       price='price_1HvQYjGun3mcXhIzyQWn2XaV'
       ,customer=customer_id
     )
 
     invoice = stripe.Invoice.create(
-      customer='cus_IWTUl5tWJsriRv',
+      customer=customer_id,
       collection_method='send_invoice',
-      days_until_due=7,
-      description='This confirms your use of the subdomain for the 30 day period starting from successful payment of this invoice. By paying this invoice you are agreeing to the following Terms of Use: https://tinyurl.com/yxco5c5u'
+      days_until_due=1,
+      description='This confirms your use of the subdomain for the 364 day period starting from successful payment of this invoice. \nYou will receive another invoice next year that you may pay if you wish to continue your subdomain. \n By paying this invoice you are agreeing to the following Terms of Use: https://tinyurl.com/yxco5c5u'
     )
     
-    subscription = stripe.Subscription.create(
-      customer=customer,
-      items=[{'price': 'price_1Hqix8Gun3mcXhIzEvMZw0ao'}],
-      collection_method='send_invoice',
-      days_until_due=7,
-    )
+    invoice.send_invoice()   
     
-    invoice.send_invoice()
+def createAnnualSubscription(customer_id):
+    stripe.Subscription.create(
+          customer='cus_IkR19D09w3YKcQ',
+          items=[{'price': 'price_1I9E1ZGun3mcXhIzHvl15eG5'}],
+          collection_method='send_invoice',
+          days_until_due=1
+        )
+    
+    
+'''Use this to update MySQL table with all Stripe events'''    
+def tryExcept(event,field_name):
+    '''
+    returns a value for a field in a Stripe event, or None if not available
+    '''
+    try:
+        if 'cus' in event['data']['object']['id'] and field_name=='customer':
+            try:
+                value = event['data']['object']['id'] #this is where customer_id lives for "customer" event types
+            except KeyError:
+                value = None 
+        else:
+            value = None
+    except:
+        try:
+            value = event['data']['object'][field_name]
+        except KeyError:
+            value = None
+    
+    return value
+
+def fillStripeEventData(event, target_dict, field_name_list):
+    '''
+    populates event data (using try/except logic) for all fields
+    '''
+    field_values = {}
+    for name in field_name_list:
+        target_dict[name] = tryExcept(event,name)
+    return target_dict
+
+def getNewStripeEvents():
+    '''
+    returns a list of dicts where each dict item contains information about a Stripe event
+    '''
+    
+    events_list = []
+    all_stripe_event_ids = []
+    i=0
+    
+    #cPanel hosting is janky
+    stripe.max_network_retries = 10
+    
+    events = stripe.Event.list()
+    for event in events.auto_paging_iter():
+        i+=1
+        if event['object']=='event':
+            
+            event_json = json.loads(json.dumps(event))
+            
+            all_stripe_event_ids.append(event_json['id'])
+            event_data={}
+            event_data['stripe_event_id']=event_json['id']
+            event_data['event_type']=event_json['type']
+            
+            ##--TIMESTAMP----------
+            createdate_epoch = event['created']
+            event_data['event_datetime_utc_epoch']=createdate_epoch
+            # get time in tz
+            tz_utc = pytz.timezone('UTC')
+            event_data['event_datetime_utc'] = datetime.fromtimestamp(createdate_epoch, tz_utc).strftime('%Y-%m-%d %H:%M:%S')
+            # get time in Central
+            tz = pytz.timezone('America/Chicago')
+            event_data['event_datetime'] = datetime.fromtimestamp(createdate_epoch, tz).strftime('%Y-%m-%d %H:%M:%S')
+            
+           #--CUSTOMER ID & AMOUNTS----------
+
+            field_name_list = ['customer','amount_due','amount_paid','amount_remaining','amount','amount_captured','amount_refunded']            
+            event_data = fillStripeEventData(event, event_data, field_name_list)
+                
+            events_list.append(event_data)
+    
+    #filter out any that are already in the database
+    existing_event_ids = getStripeEventIDs()
+    
+    event_ids_to_push_to_db = [event_id for event_id in all_stripe_event_ids if event_id not in existing_event_ids]
+
+    event_info_to_push_to_db = [event for event in events_list if event['stripe_event_id'] in event_ids_to_push_to_db]
+    
+    return event_info_to_push_to_db
+
+
+def coalesceNone(event,field):
+    if not event[field]:
+        return 'NULL'
+    elif 'amount' in field:
+        return f"{event[field]}"
+    else:
+        return f"\'{event[field]}\'"
+
+def createInsertStatement(event):
+    '''
+    Returns the INSERT statement used to add a single event to the database
+    '''
+    
+    stripe_event_id = event['stripe_event_id']
+    event_type = event['event_type']
+    event_datetime_utc_epoch = event['event_datetime_utc_epoch']
+    event_datetime_utc = event['event_datetime_utc']
+    event_datetime = event['event_datetime']
+    
+    event_sql = f"""
+    ('{stripe_event_id}',
+     '{event_type}',
+      {event_datetime_utc_epoch},
+      CAST('{event_datetime_utc}' as DATETIME),
+      CAST('{event_datetime}' as DATETIME),
+      {coalesceNone(event,'customer')},
+      {coalesceNone(event,'amount')},
+      {coalesceNone(event,'amount_captured')},
+      {coalesceNone(event,'amount_refunded')},
+      {coalesceNone(event,'amount_due')},
+      {coalesceNone(event,'amount_paid')},
+      {coalesceNone(event,'amount_remaining')}
+      )
+    """
+        
+    return event_sql

@@ -1,7 +1,11 @@
 import requests
 from xml.etree.ElementTree import fromstring, ElementTree
 from os import environ
-from . import mysql_utils as mysql
+
+import sys
+sys.path.append('/home/isgasygd/dev/routes/utils')
+
+from mysql_utils import *
 
 #get creds
 
@@ -63,7 +67,7 @@ def setHostsURLFromDb():
             AND end_date>DATE_ADD(current_timestamp(), INTERVAL -1 HOUR);
           '''
     
-    hosts = mysql.getQueryResults(sql)
+    hosts = getQueryResults(sql)
     
     #construct a URL from this dict
     commands=[]

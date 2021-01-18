@@ -23,10 +23,23 @@ import time
 from routes import *
 import logging
 
-#figure out how to import this from subdirectory
-from mysql_utils import *
+import sys
+sys.path.append('/home/isgasygd/dev/routes/utils')
 
-logging.basicConfig(level=logging.INFO)
+from mysql_utils import *
+from background_tasks import *
+
+
+# BACKGROUND TASKS
+# +++++++++++++++++++++++
+from apscheduler.schedulers.background import BackgroundScheduler
+
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(trackExecutions,'interval',seconds=300)
+sched.add_job(updateSubscriptionActiveStatus,'interval',seconds=300)
+sched.add_job(updateDNS,'interval',seconds=300)
+sched.add_job(updateStripeEvents,'interval',seconds=300)
+sched.start()
 
 
 # CREATE FLASK
@@ -128,3 +141,4 @@ def verify_reset_token(token):
         print(e)
         return
     return User.query.filter_by(username=username).first()
+
